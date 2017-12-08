@@ -18,14 +18,17 @@ Knex exporter
 
 -   `knex` **Knex** knex instance
 -   `opts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** options
-    -   `opts.queryDurarionName` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** query duration metric name (histogram) (optional, default `"knex_query_duration_seconds"`)
+    -   `opts.register` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** register to use
+    -   `opts.prefix` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** metric name prefix (optional, default `"knex_"`)
+    -   `opts.queryDurarionName` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** query duration metric name (histogram) (optional, default `"query_duration_seconds"`)
     -   `opts.responseTimeBuckets` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>**  query duration buckets (optional, default `[0.003,0.03,0.1,0.3,1.5,10]`)
-    -   `opts.queryErrorName` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** query errorr total name (counter) (optional, default `"knex_query_errors_total"`)
+    -   `opts.queryErrorName` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** query errorr total name (counter) (optional, default `"query_errors_total"`)
     -   `opts.queryErrorWithErrorLabel` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** collect err.message as "error" label (optional, default `true`)
 
 **Examples**
 
 ```javascript
+const promClient = require('prom-client');
 const Knex = require('knex');
 const knexExporter = require('knex-prometheus-exporter');
 
@@ -35,7 +38,7 @@ const knex = Knex({
 });
 const exporter = knexExporter(knex);
 
-console.log(exporter.registry.metrics())
+console.log(promClient.register.metrics())
 // =>
 // # HELP knex_query_duration_seconds histogram of query responses
 // # TYPE knex_query_duration_seconds histogram

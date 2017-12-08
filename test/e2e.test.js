@@ -1,5 +1,6 @@
 const path = require('path');
 const Knex = require('knex');
+const promClient = require('prom-client');
 const test = require('ava');
 const dedent = require('dedent');
 const knexExporter = require('../lib');
@@ -12,8 +13,11 @@ const knex = Knex({
 });
 const tableName = 'users';
 let exporter;
+let register;
 
 test.beforeEach(async () => {
+  register = new promClient.Registry();
+
   await knex.schema.createTableIfNotExists(tableName, table => {
     table.increments();
     table.string('name').notNullable();
@@ -26,6 +30,7 @@ test.afterEach.always(async () => {
 
 test.serial('measures query', async t => {
   exporter = knexExporter(knex, {
+    register,
     queryDurarionNameBuckets: [0.1, 0.3, 1.5, 10] // large enough buckets to avoid spreading
   });
 
@@ -37,7 +42,7 @@ test.serial('measures query', async t => {
     .select('id', 'name')
     .first();
 
-  const metricsOutput = exporter.registry.metrics();
+  const metricsOutput = register.metrics();
   const [, sum] = metricsOutput.match(
     /knex_query_duration_seconds_sum ([0-9]+.[0-9]+)/
   );
@@ -66,7 +71,7 @@ test.serial('measures query', async t => {
 
 test.serial('counts query errors', async t => {
   t.plan(2);
-  exporter = knexExporter(knex);
+  exporter = knexExporter(knex, { register });
 
   let queryError;
 
@@ -79,7 +84,7 @@ test.serial('counts query errors', async t => {
     t.truthy(err);
   }
 
-  const metricsOutput = exporter.registry.metrics();
+  const metricsOutput = register.metrics();
 
   t.deepEqual(
     metricsOutput,
@@ -107,6 +112,7 @@ test.serial('counts query errors', async t => {
 test.serial('counts query errors without label', async t => {
   t.plan(2);
   exporter = knexExporter(knex, {
+    register,
     queryErrorWithErrorLabel: false
   });
 
@@ -118,7 +124,7 @@ test.serial('counts query errors without label', async t => {
     t.truthy(err);
   }
 
-  const metricsOutput = exporter.registry.metrics();
+  const metricsOutput = register.metrics();
 
   t.deepEqual(
     metricsOutput,
@@ -138,6 +144,46 @@ test.serial('counts query errors without label', async t => {
       # HELP knex_query_errors_total counter of query errors
       # TYPE knex_query_errors_total counter
       knex_query_errors_total 1\n
+    `
+  );
+});
+
+test.serial('supports prefix', async t => {
+  t.plan(2);
+  exporter = knexExporter(knex, {
+    register,
+    prefix: 'foo_',
+    queryErrorWithErrorLabel: false
+  });
+
+  try {
+    await knex(tableName).insert({
+      invalid_field: 'Jane'
+    });
+  } catch (err) {
+    t.truthy(err);
+  }
+
+  const metricsOutput = register.metrics();
+
+  t.deepEqual(
+    metricsOutput,
+    dedent`
+      # HELP foo_query_duration_seconds histogram of query responses
+      # TYPE foo_query_duration_seconds histogram
+      foo_query_duration_seconds_bucket{le="0.003"} 0
+      foo_query_duration_seconds_bucket{le="0.03"} 0
+      foo_query_duration_seconds_bucket{le="0.1"} 0
+      foo_query_duration_seconds_bucket{le="0.3"} 0
+      foo_query_duration_seconds_bucket{le="1.5"} 0
+      foo_query_duration_seconds_bucket{le="10"} 0
+      foo_query_duration_seconds_bucket{le="+Inf"} 0
+      foo_query_duration_seconds_sum 0
+      foo_query_duration_seconds_count 0
+
+      # HELP foo_query_errors_total counter of query errors
+      # TYPE foo_query_errors_total counter
+      foo_query_errors_total 1\n
     `
   );
 });
