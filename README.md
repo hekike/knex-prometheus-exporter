@@ -6,9 +6,7 @@ Prometheus exporter for [knex](https://www.npmjs.com/package/knex)
 npm i -S knex-prometheus-exporter prom-client
 ```
 
-### Table of Contents
-
--   [knexExporter](#knexexporter)
+## API
 
 ### knexExporter
 
