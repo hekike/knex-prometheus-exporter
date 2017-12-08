@@ -1,3 +1,19 @@
+<a name="2.0.0"></a>
+## 2.0.0 (2017-12-08)
+
+
+#### Features
+
+* **knex:** register support and prefix ([5a5af15b](git+https://github.com/hekike/knex-prometheus-exporter.git/commit/5a5af15b))
+
+
+#### Breaking Changes
+
+* external registry
+
+ ([5a5af15b](git+https://github.com/hekike/knex-prometheus-exporter.git/commit/5a5af15b))
+
+
 <a name="1.0.1"></a>
 ### 1.0.1 (2017-12-08)
 
