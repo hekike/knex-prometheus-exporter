@@ -1,5 +1,7 @@
 # knex-prometheus-exporter
 
+[![Build Status](https://travis-ci.org/hekike/knex-prometheus-exporter.svg?branch=master)](https://travis-ci.org/hekike/knex-prometheus-exporter)
+
 Prometheus exporter for [knex](https://www.npmjs.com/package/knex)
 
 ```sh
