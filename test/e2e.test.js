@@ -39,7 +39,7 @@ test.serial('measures query', async t => {
 
   const metricsOutput = exporter.registry.metrics();
   const [, sum] = metricsOutput.match(
-    /query_duration_seconds_sum ([0-9]+.[0-9]+)/
+    /knex_query_duration_seconds_sum ([0-9]+.[0-9]+)/
   );
 
   t.deepEqual(user.name, 'Jane');
@@ -47,19 +47,19 @@ test.serial('measures query', async t => {
   t.deepEqual(
     metricsOutput,
     dedent`
-      # HELP query_duration_seconds histogram of query responses
-      # TYPE query_duration_seconds histogram
-      query_duration_seconds_bucket{le="0.1"} 2
-      query_duration_seconds_bucket{le="0.3"} 2
-      query_duration_seconds_bucket{le="1.5"} 2
-      query_duration_seconds_bucket{le="10"} 2
-      query_duration_seconds_bucket{le="+Inf"} 2
-      query_duration_seconds_sum ${sum}
-      query_duration_seconds_count 2
+      # HELP knex_query_duration_seconds histogram of query responses
+      # TYPE knex_query_duration_seconds histogram
+      knex_query_duration_seconds_bucket{le="0.1"} 2
+      knex_query_duration_seconds_bucket{le="0.3"} 2
+      knex_query_duration_seconds_bucket{le="1.5"} 2
+      knex_query_duration_seconds_bucket{le="10"} 2
+      knex_query_duration_seconds_bucket{le="+Inf"} 2
+      knex_query_duration_seconds_sum ${sum}
+      knex_query_duration_seconds_count 2
 
-      # HELP query_errors_total counter of query errors with labels: error
-      # TYPE query_errors_total counter
-      query_errors_total 0\n
+      # HELP knex_query_errors_total counter of query errors with labels: error
+      # TYPE knex_query_errors_total counter
+      knex_query_errors_total 0\n
     `
   );
 });
@@ -84,22 +84,22 @@ test.serial('counts query errors', async t => {
   t.deepEqual(
     metricsOutput,
     dedent`
-      # HELP query_duration_seconds histogram of query responses
-      # TYPE query_duration_seconds histogram
-      query_duration_seconds_bucket{le="0.003"} 0
-      query_duration_seconds_bucket{le="0.03"} 0
-      query_duration_seconds_bucket{le="0.1"} 0
-      query_duration_seconds_bucket{le="0.3"} 0
-      query_duration_seconds_bucket{le="1.5"} 0
-      query_duration_seconds_bucket{le="10"} 0
-      query_duration_seconds_bucket{le="+Inf"} 0
-      query_duration_seconds_sum 0
-      query_duration_seconds_count 0
+      # HELP knex_query_duration_seconds histogram of query responses
+      # TYPE knex_query_duration_seconds histogram
+      knex_query_duration_seconds_bucket{le="0.003"} 0
+      knex_query_duration_seconds_bucket{le="0.03"} 0
+      knex_query_duration_seconds_bucket{le="0.1"} 0
+      knex_query_duration_seconds_bucket{le="0.3"} 0
+      knex_query_duration_seconds_bucket{le="1.5"} 0
+      knex_query_duration_seconds_bucket{le="10"} 0
+      knex_query_duration_seconds_bucket{le="+Inf"} 0
+      knex_query_duration_seconds_sum 0
+      knex_query_duration_seconds_count 0
 
-      # HELP query_errors_total counter of query errors with labels: error
-      # TYPE query_errors_total counter
-      query_errors_total 0
-      query_errors_total{error="${queryError.message}"} 1\n
+      # HELP knex_query_errors_total counter of query errors with labels: error
+      # TYPE knex_query_errors_total counter
+      knex_query_errors_total 0
+      knex_query_errors_total{error="${queryError.message}"} 1\n
     `
   );
 });
@@ -123,21 +123,21 @@ test.serial('counts query errors without label', async t => {
   t.deepEqual(
     metricsOutput,
     dedent`
-      # HELP query_duration_seconds histogram of query responses
-      # TYPE query_duration_seconds histogram
-      query_duration_seconds_bucket{le="0.003"} 0
-      query_duration_seconds_bucket{le="0.03"} 0
-      query_duration_seconds_bucket{le="0.1"} 0
-      query_duration_seconds_bucket{le="0.3"} 0
-      query_duration_seconds_bucket{le="1.5"} 0
-      query_duration_seconds_bucket{le="10"} 0
-      query_duration_seconds_bucket{le="+Inf"} 0
-      query_duration_seconds_sum 0
-      query_duration_seconds_count 0
+      # HELP knex_query_duration_seconds histogram of query responses
+      # TYPE knex_query_duration_seconds histogram
+      knex_query_duration_seconds_bucket{le="0.003"} 0
+      knex_query_duration_seconds_bucket{le="0.03"} 0
+      knex_query_duration_seconds_bucket{le="0.1"} 0
+      knex_query_duration_seconds_bucket{le="0.3"} 0
+      knex_query_duration_seconds_bucket{le="1.5"} 0
+      knex_query_duration_seconds_bucket{le="10"} 0
+      knex_query_duration_seconds_bucket{le="+Inf"} 0
+      knex_query_duration_seconds_sum 0
+      knex_query_duration_seconds_count 0
 
-      # HELP query_errors_total counter of query errors
-      # TYPE query_errors_total counter
-      query_errors_total 1\n
+      # HELP knex_query_errors_total counter of query errors
+      # TYPE knex_query_errors_total counter
+      knex_query_errors_total 1\n
     `
   );
 });
