@@ -14,11 +14,31 @@ npm i -S knex-prometheus-exporter prom-client
 
 Knex exporter
 
+**Metrics:**
+
+    # HELP knex_query_duration_seconds histogram of query responses
+    # TYPE knex_query_duration_seconds histogram
+    knex_query_duration_seconds_bucket{le="0.003"} 1
+    knex_query_duration_seconds_bucket{le="0.03"} 2
+    knex_query_duration_seconds_bucket{le="0.1"} 2
+    knex_query_duration_seconds_bucket{le="0.3"} 2
+    knex_query_duration_seconds_bucket{le="1.5"} 2
+    knex_query_duration_seconds_bucket{le="10"} 2
+    knex_query_duration_seconds_bucket{le="+Inf"} 2
+    knex_query_duration_seconds_sum 0.021
+    knex_query_duration_seconds_count 2
+
+    # HELP knex_query_errors_total counter of query errors with labels: error
+    # TYPE knex_query_errors_total counter
+    knex_query_errors_total 0
+    knex_query_errors_total{error="error message"} 1
+
 **Parameters**
 
 -   `knex` **Knex** knex instance
 -   `opts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** options
     -   `opts.register` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** register to use
+    -   `opts.labels` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** extra labels (optional, default `{}`)
     -   `opts.prefix` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** metric name prefix (optional, default `"knex_"`)
     -   `opts.queryDurarionName` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** query duration metric name (histogram) (optional, default `"query_duration_seconds"`)
     -   `opts.responseTimeBuckets` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>**  query duration buckets (optional, default `[0.003,0.03,0.1,0.3,1.5,10]`)

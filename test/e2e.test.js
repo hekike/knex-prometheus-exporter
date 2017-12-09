@@ -63,8 +63,7 @@ test.serial('measures query', async t => {
       knex_query_duration_seconds_count 2
 
       # HELP knex_query_errors_total counter of query errors with labels: error
-      # TYPE knex_query_errors_total counter
-      knex_query_errors_total 0\n
+      # TYPE knex_query_errors_total counter\n
     `
   );
 });
@@ -103,7 +102,6 @@ test.serial('counts query errors', async t => {
 
       # HELP knex_query_errors_total counter of query errors with labels: error
       # TYPE knex_query_errors_total counter
-      knex_query_errors_total 0
       knex_query_errors_total{error="${queryError.message}"} 1\n
     `
   );
@@ -184,6 +182,52 @@ test.serial('supports prefix', async t => {
       # HELP foo_query_errors_total counter of query errors
       # TYPE foo_query_errors_total counter
       foo_query_errors_total 1\n
+    `
+  );
+});
+
+test.serial('supports labels', async t => {
+  t.plan(2);
+  exporter = knexExporter(knex, {
+    register,
+    labels: { foo: 'bar' },
+    queryErrorWithErrorLabel: false,
+    queryDurarionNameBuckets: [0.1, 0.3, 1.5, 10] // large enough buckets to avoid spreading
+  });
+
+  try {
+    await knex(tableName).insert({
+      invalid_field: 'Jane'
+    });
+  } catch (err) {
+    t.truthy(err);
+  }
+
+  await knex(tableName)
+    .select('id', 'name')
+    .first();
+
+  const metricsOutput = register.metrics();
+  const [, sum] = metricsOutput.match(
+    /knex_query_duration_seconds_sum{foo="bar"} ([0-9]+.[0-9]+)/
+  );
+
+  t.deepEqual(
+    metricsOutput,
+    dedent`
+      # HELP knex_query_duration_seconds histogram of query responses
+      # TYPE knex_query_duration_seconds histogram
+      knex_query_duration_seconds_bucket{le="0.1",foo="bar"} 1
+      knex_query_duration_seconds_bucket{le="0.3",foo="bar"} 1
+      knex_query_duration_seconds_bucket{le="1.5",foo="bar"} 1
+      knex_query_duration_seconds_bucket{le="10",foo="bar"} 1
+      knex_query_duration_seconds_bucket{le="+Inf",foo="bar"} 1
+      knex_query_duration_seconds_sum{foo="bar"} ${sum}
+      knex_query_duration_seconds_count{foo="bar"} 1
+
+      # HELP knex_query_errors_total counter of query errors
+      # TYPE knex_query_errors_total counter
+      knex_query_errors_total{foo="bar"} 1\n
     `
   );
 });
