@@ -1,3 +1,12 @@
+<a name="2.1.0"></a>
+## 2.1.0 (2017-12-09)
+
+
+#### Features
+
+* **exporter:** support labels ([7de8ed68](git+https://github.com/hekike/knex-prometheus-exporter.git/commit/7de8ed68))
+
+
 <a name="2.0.0"></a>
 ## 2.0.0 (2017-12-08)
 
