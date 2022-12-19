@@ -1,5 +1,5 @@
 {
-  "name": "knex-prometheus-exporter",
+  "name": "@cs-chatbots/knex-prometheus-exporter",
   "version": "3.0.0",
   "description": "Knex Prometheus exporter",
   "keywords": [
