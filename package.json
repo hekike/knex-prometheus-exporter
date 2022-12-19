@@ -1,6 +1,6 @@
 {
   "name": "knex-prometheus-exporter",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Knex Prometheus exporter",
   "keywords": [
     "prometheus",
@@ -31,7 +31,7 @@
   "homepage": "https://github.com/hekike/knex-prometheus-exporter#readme",
   "dependencies": {},
   "peerDependencies": {
-    "prom-client": "10.x"
+    "prom-client": "13.x"
   },
   "devDependencies": {
     "ava": "0.24.0",
@@ -47,7 +47,7 @@
     "knex": "0.14.2",
     "nyc": "11.3.0",
     "prettier": "1.8.2",
-    "prom-client": "10.2.2",
-    "sqlite3": "3.1.13"
+    "prom-client": "13.0.0",
+    "sqlite3": "5.1.4"
   }
 }

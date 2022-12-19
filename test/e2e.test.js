@@ -29,7 +29,7 @@ test.afterEach.always(async () => {
 });
 
 test.serial('measures query', async t => {
-  exporter = knexExporter(knex, {
+  exporter = await knexExporter(knex, {
     register,
     queryDurarionNameBuckets: [0.1, 0.3, 1.5, 10] // large enough buckets to avoid spreading
   });
@@ -42,11 +42,10 @@ test.serial('measures query', async t => {
     .select('id', 'name')
     .first();
 
-  const metricsOutput = register.metrics();
+  const metricsOutput = await register.metrics();
   const [, sum] = metricsOutput.match(
     /knex_query_duration_seconds_sum ([0-9]+.[0-9]+)/
   );
-
   t.deepEqual(user.name, 'Jane');
   t.true(sum > 0, 'sum is larger than zero');
   t.deepEqual(
@@ -70,7 +69,7 @@ test.serial('measures query', async t => {
 
 test.serial('counts query errors', async t => {
   t.plan(2);
-  exporter = knexExporter(knex, { register });
+  exporter = await knexExporter(knex, { register });
 
   let queryError;
 
@@ -83,7 +82,7 @@ test.serial('counts query errors', async t => {
     t.truthy(err);
   }
 
-  const metricsOutput = register.metrics();
+  const metricsOutput = await register.metrics();
 
   t.deepEqual(
     metricsOutput,
@@ -109,7 +108,7 @@ test.serial('counts query errors', async t => {
 
 test.serial('counts query errors without label', async t => {
   t.plan(2);
-  exporter = knexExporter(knex, {
+  exporter = await knexExporter(knex, {
     register,
     queryErrorWithErrorLabel: false
   });
@@ -122,7 +121,7 @@ test.serial('counts query errors without label', async t => {
     t.truthy(err);
   }
 
-  const metricsOutput = register.metrics();
+  const metricsOutput = await register.metrics();
 
   t.deepEqual(
     metricsOutput,
@@ -148,7 +147,7 @@ test.serial('counts query errors without label', async t => {
 
 test.serial('supports prefix', async t => {
   t.plan(2);
-  exporter = knexExporter(knex, {
+  exporter = await knexExporter(knex, {
     register,
     prefix: 'foo_',
     queryErrorWithErrorLabel: false
@@ -162,7 +161,7 @@ test.serial('supports prefix', async t => {
     t.truthy(err);
   }
 
-  const metricsOutput = register.metrics();
+  const metricsOutput = await register.metrics();
 
   t.deepEqual(
     metricsOutput,
@@ -188,7 +187,7 @@ test.serial('supports prefix', async t => {
 
 test.serial('supports labels', async t => {
   t.plan(2);
-  exporter = knexExporter(knex, {
+  exporter = await knexExporter(knex, {
     register,
     labels: { foo: 'bar' },
     queryErrorWithErrorLabel: false,
@@ -207,7 +206,7 @@ test.serial('supports labels', async t => {
     .select('id', 'name')
     .first();
 
-  const metricsOutput = register.metrics();
+  const metricsOutput = await register.metrics();
   const [, sum] = metricsOutput.match(
     /knex_query_duration_seconds_sum{foo="bar"} ([0-9]+.[0-9]+)/
   );
