@@ -1,3 +1,15 @@
+<a name="3.0.0"></a>
+## 3.0.0 (2022-12-19)
+
+#### Breaking according the prom-client 13.x
+
+changed: The following functions are now async (return a promise):
+registry.metrics()
+registry.getMetricsAsJSON()
+registry.getMetricsAsArray()
+registry.getSingleMetricAsString()
+
+
 <a name="2.1.0"></a>
 ## 2.1.0 (2017-12-09)
 
